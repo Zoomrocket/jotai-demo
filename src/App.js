@@ -1,23 +1,46 @@
-import logo from './logo.svg';
+import produce from 'immer';
+import { useAtom } from 'jotai';
+import { useState } from 'react';
 import './App.css';
+import todoAtom, { insertTodoAtom } from './todoAtom';
+import userAtom, { loginAtom } from './userAtom';
+
 
 function App() {
+
+  const [todos] = useAtom(todoAtom);
+  const [user] = useAtom(userAtom);
+  const [, login] = useAtom(loginAtom);
+
+  const [, insertTodo] = useAtom(insertTodoAtom);
+
+  const [text, setText] = useState("");
+
+  const handleClick = async () => {
+    await insertTodo(text)
+    setText("");
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+
+      <p>Email: {user.email}</p>
+      <p>Name: {user.name}</p>
+      <button onClick={login}>Login</button>
+
+      <p>------------------------------------------------</p>
+
+      <h1>Todos</h1>
+      <input placeholder="Enter Todo" onChange={(e) => setText(e.target.value)} value={text} />
+      <button onClick={handleClick}>Add Todo</button>
+      <ul>
+        {
+          todos.map((todo, index) => {
+            return <li key={index}>{todo}</li>
+          })
+        }
+      </ul>
+      <p>{todos.length < 1 ? "No todos" : null}</p>
     </div>
   );
 }
